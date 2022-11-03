@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { Author } from '@prisma/client';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { GetAuthor } from 'src/auth/decorators/get-author.decorator';
@@ -28,28 +36,30 @@ export class PostsController {
 
   @Get('byAuthor/:id')
   async findAllByAuthor(
-    @Param('id') authorId: string,
+    @Param('id', ParseIntPipe) authorId: number,
     @PostPagination() paginationQuery: PaginationQuery,
   ) {
-    return this.postsService.findAllByAuthor(+authorId, paginationQuery);
+    return this.postsService.findAllByAuthor(authorId, paginationQuery);
   }
 
   @Post('togglePublish/:id')
   @Auth()
-  async togglePublish(@Param('id') postId: string) {
-    return this.postsService.togglePublish(+postId);
+  async togglePublish(@Param('id', ParseIntPipe) postId: number) {
+    return this.postsService.togglePublish(postId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.postsService.findOne(id);
   }
 
   @Patch(':id')
   @Auth()
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    console.log(updatePostDto);
-    return this.postsService.update(+id, updatePostDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePostDto: UpdatePostDto,
+  ) {
+    return this.postsService.update(id, updatePostDto);
   }
 
   @Get('searchPost/:title')

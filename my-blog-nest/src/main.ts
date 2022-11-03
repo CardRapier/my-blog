@@ -12,8 +12,9 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter({ logger: true }),
   );
+  app.setGlobalPrefix('api');
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
